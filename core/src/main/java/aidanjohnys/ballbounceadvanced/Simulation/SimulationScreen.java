@@ -1,26 +1,85 @@
 package aidanjohnys.ballbounceadvanced.Simulation;
 
+import aidanjohnys.ballbounceadvanced.Main;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
-/** First screen of the application. Displayed after the application is created. */
+
 public class SimulationScreen implements Screen {
+    private final AssetManager assetManager;
+    private final BallManager ballManager;
+    private final WallManager wallManager;
+    private final Stage stage;
+    private final Viewport viewport;
+    private final OrthographicCamera camera;
+
+    // Box2D
+    private final World world;
+    private final Box2DDebugRenderer debugRenderer;
+    public static final float BOX2D_SCALE = 0.01f;
+    private static final float GRAVITY = 9.8f;
+    private float accumulator = 0;
+    private static final float TIME_STEP = 1/60f;
+    private static final int VELOCITY_ITERATIONS = 6;
+    private static final int POSITION_ITERATIONS = 2;
+    private static final int MIN_SIM_FRAME_RATE = 30;
+
+
+    public SimulationScreen() {
+        assetManager = new AssetManager();
+        assetManager.load("texture/ball.png", Texture.class);
+        assetManager.finishLoading();
+
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, Main.SCREEN_WIDTH, Main.SCREEN_HEIGHT);
+        viewport = new FitViewport(Main.SCREEN_WIDTH, Main.SCREEN_HEIGHT, camera);
+
+        world = new World(new Vector2(0, -GRAVITY), true);
+        debugRenderer = new Box2DDebugRenderer();
+
+        stage = new Stage(viewport);
+        ballManager = new BallManager(10, assetManager.get("texture/ball.png", Texture.class), world);
+        stage.addActor(ballManager);
+
+        wallManager = new WallManager(world);
+    }
+
     @Override
     public void show() {
-        // Prepare your screen here.
     }
 
     @Override
     public void render(float delta) {
-        // Draw your screen here. "delta" is the time since last render in seconds.
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClearColor(1f, 1f, 1f, 1);
+        doPhysicsStep(delta);
+        stage.act(delta);
+        stage.draw();
+        debugRenderer.render(world, camera.combined.scale(1f/BOX2D_SCALE, 1f/BOX2D_SCALE, 1f/BOX2D_SCALE));
+    }
+
+    private void doPhysicsStep(float deltaTime) {
+        float frameTime = Math.min(deltaTime, 1f / MIN_SIM_FRAME_RATE);
+        accumulator += frameTime;
+        while (accumulator >= TIME_STEP) {
+            world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
+            accumulator -= TIME_STEP;
+        }
     }
 
     @Override
     public void resize(int width, int height) {
-        // If the window is minimized on a desktop (LWJGL3) platform, width and height are 0, which causes problems.
-        // In that case, we don't resize anything, and wait for the window to be a normal size before updating.
         if(width <= 0 || height <= 0) return;
 
-        // Resize your screen here. The parameters represent the new window size.
+        viewport.update(width, height, true);
     }
 
     @Override
@@ -40,6 +99,7 @@ public class SimulationScreen implements Screen {
 
     @Override
     public void dispose() {
-        // Destroy screen's assets here.
+        stage.dispose();
+        world.dispose();
     }
 }
