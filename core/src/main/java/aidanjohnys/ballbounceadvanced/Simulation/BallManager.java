@@ -7,6 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import java.util.ArrayList;
 
+import static aidanjohnys.ballbounceadvanced.Main.SCREEN_HEIGHT;
+import static aidanjohnys.ballbounceadvanced.Main.SCREEN_WIDTH;
+
 public class BallManager extends Actor {
     private final ArrayList<Ball> balls;
 
@@ -14,7 +17,7 @@ public class BallManager extends Actor {
         balls = new ArrayList<>();
 
         for (int i = 0; i < numberOfBalls; i++) {
-            Ball ball = new Ball(ballTexture, world);
+            Ball ball = new Ball(ballTexture, world, SCREEN_WIDTH / 2f, SCREEN_HEIGHT / 2f);
             balls.add(ball);
         }
     }

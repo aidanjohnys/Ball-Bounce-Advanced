@@ -23,7 +23,7 @@ public class SimulationScreen implements Screen {
     private final World world;
     private final Box2DDebugRenderer debugRenderer;
     public static final float BOX2D_SCALE = 0.01f;
-    private static final float GRAVITY = 9.8f;
+    private static final float GRAVITY = 1f;
     private float accumulator = 0;
     private static final float TIME_STEP = 1/60f;
     private static final int VELOCITY_ITERATIONS = 6;
@@ -44,7 +44,7 @@ public class SimulationScreen implements Screen {
         debugRenderer = new Box2DDebugRenderer();
 
         stage = new Stage(viewport);
-        BallManager ballManager = new BallManager(10, assetManager.get("texture/ball.png", Texture.class), world);
+        BallManager ballManager = new BallManager(50, assetManager.get("texture/ball.png", Texture.class), world);
         stage.addActor(ballManager);
 
         WallManager wallManager = new WallManager(world);
@@ -61,7 +61,7 @@ public class SimulationScreen implements Screen {
         doPhysicsStep(delta);
         stage.act(delta);
         stage.draw();
-        debugRenderer.render(world, camera.combined.scale(1f/BOX2D_SCALE, 1f/BOX2D_SCALE, 1f/BOX2D_SCALE));
+        //debugRenderer.render(world, camera.combined.scale(1f/BOX2D_SCALE, 1f/BOX2D_SCALE, 1f/BOX2D_SCALE));
 
         if (Gdx.input.isKeyPressed(Input.Keys.PERIOD)) {
             camera.zoom += 1 * delta;
