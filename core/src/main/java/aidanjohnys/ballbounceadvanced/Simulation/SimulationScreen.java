@@ -1,4 +1,4 @@
-package aidanjohnys.ballbounceadvanced;
+package aidanjohnys.ballbounceadvanced.Simulation;
 
 import com.badlogic.gdx.Screen;
 
