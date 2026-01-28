@@ -44,7 +44,7 @@ public class SimulationScreen implements Screen {
         debugRenderer = new Box2DDebugRenderer();
 
         stage = new Stage(viewport);
-        BallManager ballManager = new BallManager(50, assetManager.get("texture/ball.png", Texture.class), world);
+        BallManager ballManager = new BallManager(30, assetManager.get("texture/ball.png", Texture.class), world);
         stage.addActor(ballManager);
 
         WallManager wallManager = new WallManager(world);

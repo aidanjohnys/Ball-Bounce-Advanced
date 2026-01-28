@@ -11,11 +11,11 @@ import static aidanjohnys.ballbounceadvanced.Simulation.SimulationScreen.BOX2D_S
 
 public class Ball extends Actor {
     public static final int BALL_DIAMETER = 50;
-    public static final float BODY_DENSITY = 1f;
-    public static final float BODY_FRICTION = 0.5f;
+    public static final float BODY_DENSITY = 0.5f;
+    public static final float BODY_FRICTION = 1f;
     public static final float BODY_RESTITUTION = 1f;
     private final Sprite sprite;
-    private final Body body;
+    public final Body body;
 
     public Ball(Texture texture, World world, float spawnX, float spawnY)  {
         sprite = new Sprite(texture);
@@ -53,6 +53,6 @@ public class Ball extends Actor {
 
     @Override
     public void act(float delta) {
-        body.applyAngularImpulse(1 * delta,true);
+        body.applyAngularImpulse(0.2f * delta,true);
     }
 }
