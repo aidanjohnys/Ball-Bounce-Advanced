@@ -19,7 +19,7 @@ public class Ball extends Actor {
 
     public Ball(Texture texture, World world, float spawnX, float spawnY)  {
         sprite = new Sprite(texture);
-        sprite.setColor((float) (Math.random() * 1), (float) (Math.random() * 1), (float) (Math.random() * 1), 1f);
+        sprite.setColor((float) (Math.random() * 0.7) + 0.3f, (float) (Math.random() * 0.7f) + 0.3f, (float) (Math.random() * 0.7f) + 0.3f, 1f);
         Vector2 position = new Vector2(spawnX, spawnY);
 
 
