@@ -2,6 +2,7 @@ package aidanjohnys.ballbounceadvanced.Simulation;
 
 import aidanjohnys.ballbounceadvanced.Main;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.*;
@@ -14,9 +15,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 
 public class SimulationScreen implements Screen {
-    private final AssetManager assetManager;
-    private final BallManager ballManager;
-    private final WallManager wallManager;
     private final Stage stage;
     private final Viewport viewport;
     private final OrthographicCamera camera;
@@ -34,7 +32,7 @@ public class SimulationScreen implements Screen {
 
 
     public SimulationScreen() {
-        assetManager = new AssetManager();
+        AssetManager assetManager = new AssetManager();
         assetManager.load("texture/ball.png", Texture.class);
         assetManager.finishLoading();
 
@@ -46,10 +44,10 @@ public class SimulationScreen implements Screen {
         debugRenderer = new Box2DDebugRenderer();
 
         stage = new Stage(viewport);
-        ballManager = new BallManager(10, assetManager.get("texture/ball.png", Texture.class), world);
+        BallManager ballManager = new BallManager(10, assetManager.get("texture/ball.png", Texture.class), world);
         stage.addActor(ballManager);
 
-        wallManager = new WallManager(world);
+        WallManager wallManager = new WallManager(world);
     }
 
     @Override
@@ -64,6 +62,10 @@ public class SimulationScreen implements Screen {
         stage.act(delta);
         stage.draw();
         debugRenderer.render(world, camera.combined.scale(1f/BOX2D_SCALE, 1f/BOX2D_SCALE, 1f/BOX2D_SCALE));
+
+        if (Gdx.input.isKeyPressed(Input.Keys.PERIOD)) {
+            camera.zoom += 1 * delta;
+        }
     }
 
     private void doPhysicsStep(float deltaTime) {
