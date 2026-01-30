@@ -14,7 +14,7 @@ public class Ball extends Actor {
     private static final float BODY_DENSITY = 0.5f;
     private static final float BODY_FRICTION = 1f;
     private static final float BODY_RESTITUTION = 1f;
-    private static final float BODY_TEMPERATURE = 0.1f;
+    private static final float BODY_ENERGY = 0.01f;
     private final Sprite sprite;
     public final Body body;
 
@@ -54,6 +54,6 @@ public class Ball extends Actor {
 
     @Override
     public void act(float delta) {
-        body.applyAngularImpulse(BODY_TEMPERATURE * delta,true);
+        body.applyAngularImpulse(BODY_ENERGY * delta,true);
     }
 }
