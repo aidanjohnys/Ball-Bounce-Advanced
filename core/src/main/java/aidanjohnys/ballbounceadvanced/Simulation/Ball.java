@@ -10,10 +10,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import static aidanjohnys.ballbounceadvanced.Simulation.SimulationScreen.BOX2D_SCALE;
 
 public class Ball extends Actor {
-    public static final int BALL_DIAMETER = 50;
-    public static final float BODY_DENSITY = 0.5f;
-    public static final float BODY_FRICTION = 1f;
-    public static final float BODY_RESTITUTION = 1f;
+    private static final int BALL_DIAMETER = 50;
+    private static final float BODY_DENSITY = 0.5f;
+    private static final float BODY_FRICTION = 1f;
+    private static final float BODY_RESTITUTION = 1f;
+    private static final float BODY_TEMPERATURE = 0.1f;
     private final Sprite sprite;
     public final Body body;
 
@@ -53,6 +54,6 @@ public class Ball extends Actor {
 
     @Override
     public void act(float delta) {
-        body.applyAngularImpulse(0.2f * delta,true);
+        body.applyAngularImpulse(BODY_TEMPERATURE * delta,true);
     }
 }
