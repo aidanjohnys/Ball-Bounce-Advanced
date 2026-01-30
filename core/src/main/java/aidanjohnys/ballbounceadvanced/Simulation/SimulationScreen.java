@@ -28,13 +28,14 @@ public class SimulationScreen implements Screen {
     private static final float TIME_STEP = 1/60f;
     private static final int VELOCITY_ITERATIONS = 6;
     private static final int POSITION_ITERATIONS = 2;
-    private static final int MIN_SIM_FRAME_RATE = 30;
+    public static final int MIN_SIM_FRAME_RATE = 30;
 
 
     public SimulationScreen() {
         AssetManager assetManager = new AssetManager();
         assetManager.load("texture/ball.png", Texture.class);
         assetManager.finishLoading();
+        assetManager.get("texture/ball.png", Texture.class).setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Main.SCREEN_WIDTH, Main.SCREEN_HEIGHT);
@@ -44,7 +45,7 @@ public class SimulationScreen implements Screen {
         debugRenderer = new Box2DDebugRenderer();
 
         stage = new Stage(viewport);
-        BallManager ballManager = new BallManager(5, assetManager.get("texture/ball.png", Texture.class), world);
+        BallManager ballManager = new BallManager(1, assetManager.get("texture/ball.png", Texture.class), world);
         stage.addActor(ballManager);
 
         WallManager wallManager = new WallManager(world);

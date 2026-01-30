@@ -10,16 +10,17 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import static aidanjohnys.ballbounceadvanced.Simulation.SimulationScreen.BOX2D_SCALE;
+import static aidanjohnys.ballbounceadvanced.Simulation.SimulationScreen.MIN_SIM_FRAME_RATE;
 
 public class Ball extends Actor {
     private static final int BALL_DIAMETER = 50;
     private static final float BODY_DENSITY = 0.5f;
     private static final float BODY_FRICTION = 1f;
     private static final float BODY_RESTITUTION = 0.9f;
-    private static final float BODY_ENERGY = 0.5f;
+    private static final float BODY_ENERGY = 0.4f;
     private static final float AIR_DENSITY = 0.005f;
     private static final float SPRITE_TRAIL_SPACING = 5f;
-    private static final float SPRITE_TRAIL_ALIVE_TIME = 0.15f;
+    private static final float SPRITE_TRAIL_ALIVE_TIME = 5.5f;
     private static final float SPRITE_TRAIL_OPACITY = 0.1f;
     private final Sprite sprite;
     private final Texture ballTexture;
@@ -64,7 +65,7 @@ public class Ball extends Actor {
             trailSprite.setPosition(spriteTrails.get(i).x, spriteTrails.get(i).y);
             trailSprite.setColor(sprite.getColor());
             float aliveTime = spriteTrails.getAliveTime(i);
-            trailSprite.setAlpha((SPRITE_TRAIL_ALIVE_TIME - aliveTime) / SPRITE_TRAIL_ALIVE_TIME * SPRITE_TRAIL_OPACITY);
+            trailSprite.setAlpha(Math.max((SPRITE_TRAIL_ALIVE_TIME - aliveTime) / SPRITE_TRAIL_ALIVE_TIME * SPRITE_TRAIL_OPACITY, 0));
             trailSprite.draw(batch, parentAlpha);
         }
 
@@ -86,7 +87,7 @@ public class Ball extends Actor {
             spriteTrails.offer(new Vector2(x, y));
         }
 
-        spriteTrails.updateDeltaTime(Gdx.graphics.getDeltaTime());
+        spriteTrails.updateDeltaTime(Math.min(Gdx.graphics.getDeltaTime(), 1f / MIN_SIM_FRAME_RATE));
 
         if (spriteTrails.peekAliveTime() > SPRITE_TRAIL_ALIVE_TIME) {
             spriteTrails.poll();
