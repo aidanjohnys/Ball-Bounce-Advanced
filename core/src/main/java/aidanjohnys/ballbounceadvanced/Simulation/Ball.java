@@ -14,7 +14,8 @@ public class Ball extends Actor {
     private static final float BODY_DENSITY = 0.5f;
     private static final float BODY_FRICTION = 1f;
     private static final float BODY_RESTITUTION = 1f;
-    private static final float BODY_ENERGY = 0.01f;
+    private static final float BODY_ENERGY = 0.5f;
+    private static final float AIR_DENSITY = 0.01f;
     private final Sprite sprite;
     public final Body body;
 
@@ -55,5 +56,27 @@ public class Ball extends Actor {
     @Override
     public void act(float delta) {
         body.applyAngularImpulse(BODY_ENERGY * delta,true);
+        applyAirFriction();
+    }
+
+    private void applyAirFriction() {
+        Vector2 resistance = new Vector2(0,0);
+        if (body.getLinearVelocity().x < 0f) {
+            resistance.x = (float) Math.pow(body.getLinearVelocity().x, 2) * AIR_DENSITY;
+        }
+
+        else {
+            resistance.x = (float) Math.pow(body.getLinearVelocity().x, 2) * -AIR_DENSITY;
+        }
+
+        if (body.getLinearVelocity().y < 0f) {
+            resistance.y = (float) Math.pow(body.getLinearVelocity().y, 2) * AIR_DENSITY;
+        }
+
+        else {
+            resistance.y = (float) Math.pow(body.getLinearVelocity().y, 2) * -AIR_DENSITY;
+        }
+
+        body.applyForce(resistance, new Vector2(0, 0), true);
     }
 }
