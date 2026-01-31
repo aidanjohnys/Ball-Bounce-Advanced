@@ -30,6 +30,10 @@ public class BallManager extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         for (Ball b: balls) {
+            b.drawTrails(batch, parentAlpha);
+        }
+
+        for (Ball b: balls) {
             b.draw(batch, parentAlpha);
         }
     }

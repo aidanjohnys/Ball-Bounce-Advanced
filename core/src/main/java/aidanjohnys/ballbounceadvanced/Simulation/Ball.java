@@ -16,11 +16,11 @@ public class Ball extends Actor {
     private static final int BALL_DIAMETER = 50;
     private static final float BODY_DENSITY = 0.5f;
     private static final float BODY_FRICTION = 1f;
-    private static final float BODY_RESTITUTION = 0.9f;
-    private static final float BODY_ENERGY = 0.4f;
+    private static final float BODY_RESTITUTION = 1f;
+    private static final float BODY_ENERGY = 0.5f;
     private static final float AIR_DENSITY = 0.005f;
-    private static final float SPRITE_TRAIL_SPACING = 5f;
-    private static final float SPRITE_TRAIL_ALIVE_TIME = 5.5f;
+    private static final float SPRITE_TRAIL_SPACING = 1f;
+    private static final float SPRITE_TRAIL_ALIVE_TIME = 0.1f;
     private static final float SPRITE_TRAIL_OPACITY = 0.1f;
     private final Sprite sprite;
     private final Texture ballTexture;
@@ -53,12 +53,25 @@ public class Ball extends Actor {
         body.applyLinearImpulse((float) (Math.random() * 1), (float) (Math.random() * 1), 0, 0, true);
 
         spriteTrails = new TimeBasedQueue<>();
+
+        // run this once so that the trails doesn't briefly show (0,0)
+        float bodyX = (body.getPosition().x / BOX2D_SCALE) - (float) BALL_DIAMETER / 2 ;
+        float bodyY = (body.getPosition().y / BOX2D_SCALE) - (float) BALL_DIAMETER / 2 ;
+        sprite.setPosition(bodyX, bodyY);
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
         float x = (body.getPosition().x / BOX2D_SCALE) - (float) BALL_DIAMETER / 2 ;
         float y = (body.getPosition().y / BOX2D_SCALE) - (float) BALL_DIAMETER / 2 ;
+
+        sprite.setPosition(x, y);
+        sprite.draw(batch);
+    }
+
+    public void drawTrails(Batch batch, float parentAlpha) {
+        float x = sprite.getX();
+        float y = sprite.getY();
 
         for (int i = 0; i < spriteTrails.size(); i++) {
             Sprite trailSprite = new Sprite(ballTexture);
@@ -92,9 +105,6 @@ public class Ball extends Actor {
         if (spriteTrails.peekAliveTime() > SPRITE_TRAIL_ALIVE_TIME) {
             spriteTrails.poll();
         }
-
-        sprite.setPosition(x, y);
-        sprite.draw(batch);
     }
 
     @Override
