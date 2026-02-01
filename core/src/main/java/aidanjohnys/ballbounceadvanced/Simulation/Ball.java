@@ -19,8 +19,8 @@ public class Ball extends Actor {
     private static final float BODY_RESTITUTION = 1f;
     private static final float BODY_ENERGY = 0.5f;
     private static final float AIR_DENSITY = 0.005f;
-    private static final float SPRITE_TRAIL_SPACING = 1f;
-    private static final float SPRITE_TRAIL_ALIVE_TIME = 0.1f;
+    private static final float SPRITE_TRAIL_SPACING = 2f;
+    private static final float SPRITE_TRAIL_ALIVE_TIME = 0.2f;
     private static final float SPRITE_TRAIL_OPACITY = 0.1f;
     private final Sprite sprite;
     private final Texture ballTexture;
@@ -70,30 +70,25 @@ public class Ball extends Actor {
     }
 
     public void drawTrails(Batch batch, float parentAlpha) {
-        float x = sprite.getX();
-        float y = sprite.getY();
-
-        for (int i = 0; i < spriteTrails.size(); i++) {
-            Sprite trailSprite = new Sprite(ballTexture);
-            trailSprite.setPosition(spriteTrails.get(i).x, spriteTrails.get(i).y);
-            trailSprite.setColor(sprite.getColor());
-            float aliveTime = spriteTrails.getAliveTime(i);
-            trailSprite.setAlpha(Math.max((SPRITE_TRAIL_ALIVE_TIME - aliveTime) / SPRITE_TRAIL_ALIVE_TIME * SPRITE_TRAIL_OPACITY, 0));
-            trailSprite.draw(batch, parentAlpha);
-        }
+        float x = (body.getPosition().x / BOX2D_SCALE) - (float) BALL_DIAMETER / 2 ;
+        float y = (body.getPosition().y / BOX2D_SCALE) - (float) BALL_DIAMETER / 2 ;
 
         Vector2 recentSprite = spriteTrails.peekLast();
 
         if (recentSprite != null) {
             float recentX = recentSprite.x;
             float recentY = recentSprite.y;
-            float distance = (float) Math.sqrt(Math.pow(x - recentX, 2) + Math.pow(y - recentY, 2));
 
-            if (distance > SPRITE_TRAIL_SPACING) {
-                Sprite newSprite = new Sprite(ballTexture);
-                newSprite.setPosition(x, y);
-                spriteTrails.offer(new Vector2(x, y));
+            float combinedVelocity = Math.abs(body.getLinearVelocity().x) + Math.abs(body.getLinearVelocity().y);
+            int noSubPoints = (int) (1f / SPRITE_TRAIL_SPACING * combinedVelocity) + 1;
+
+            for (int i = noSubPoints - 1; i >= 0; i--) {
+                float xDiff = (x - recentX) * ((float) i / noSubPoints);
+                float yDiff = (y - recentY) * ((float) i / noSubPoints);
+
+                spriteTrails.offer(new Vector2(x - xDiff, y - yDiff));
             }
+
         }
 
         else {
@@ -102,8 +97,17 @@ public class Ball extends Actor {
 
         spriteTrails.updateDeltaTime(Math.min(Gdx.graphics.getDeltaTime(), 1f / MIN_SIM_FRAME_RATE));
 
-        if (spriteTrails.peekAliveTime() > SPRITE_TRAIL_ALIVE_TIME) {
+        while (spriteTrails.peekAliveTime() > SPRITE_TRAIL_ALIVE_TIME) {
             spriteTrails.poll();
+        }
+
+        for (int i = 0; i < spriteTrails.size(); i++) {
+            Sprite trailSprite = new Sprite(ballTexture);
+            trailSprite.setPosition(spriteTrails.get(i).x, spriteTrails.get(i).y);
+            trailSprite.setColor(sprite.getColor());
+            float aliveTime = spriteTrails.getAliveTime(i);
+            trailSprite.setAlpha(Math.max((SPRITE_TRAIL_ALIVE_TIME - aliveTime) / SPRITE_TRAIL_ALIVE_TIME * SPRITE_TRAIL_OPACITY, 0));
+            trailSprite.draw(batch, parentAlpha);
         }
     }
 
